@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    svg { color: #fafafa; background: #0a0a0a; border-radius: 9px; }
+    @media (prefers-color-scheme: dark) { svg { color: #0a0a0a; background: #fafafa; } }
+  </style>
+  <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+    <rect x="5.5" y="8" width="21" height="16" rx="2"/>
+    <path d="m6 10 10 7 10-7"/>
+  </g>
+</svg>

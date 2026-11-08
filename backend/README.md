@@ -1,19 +1,39 @@
 # Chatmail backend
 
-This Hono API runs on Cloudflare Workers. Wrangler runs the Worker and its SQLite-backed D1 database locally. The quick start works without a Cloudflare account.
+Chatmail serves its React interface and Hono API from one Cloudflare Worker. D1 holds users, OTP challenges, sessions, encrypted mailbox credentials, and short-lived send receipts. Chat lists and message bodies are read directly from the connected IMAP servers. Replies and new messages use the selected account's SMTP server.
 
 ## Run locally
 
-Use Node.js 24 (see `.nvmrc`) and npm. From the repository root, run:
+Use Bun for the frontend and Node.js 24 (see `.nvmrc`) for the Worker. From the repository root:
 
 ```sh
+(cd frontend && bun install --frozen-lockfile && bun run build)
 cd backend
 npm ci
+node scripts/setup-local.mjs
 npm run db:migrate:local
 npm run dev
 ```
 
-Open [http://localhost:8787/health](http://localhost:8787/health) to check the Worker, or [http://localhost:8787/ready](http://localhost:8787/ready) to check the database. Wrangler stores local D1 data under `.wrangler/state/` and reuses it across restarts.
+Open [Chatmail](http://localhost:8787) and request a sign-in code. Wrangler's local email simulator captures the message and prints its file path in the terminal. Use that code to connect a public IMAP/SMTP mailbox. For frontend hot reload, run `bun run dev` in `frontend` alongside the Worker. Vite proxies `/api` to port 8787.
+
+Local settings are generated once in the ignored `.dev.vars` file. Keep its `MAIL_KEY` to decrypt settings after restarting. Wrangler reuses local D1 data under `.wrangler/state/`.
+
+The app displays up to 128 KiB of decoded text per message and labels truncated bodies. The send endpoint recognizes a submission for 24 hours. A daily maintenance job removes expired receipts, sessions, sign-in challenges, and rate-limit records.
+
+## Configure a hosted instance
+
+Build the frontend first so Wrangler can serve `frontend/dist`. Configure the D1 binding for the intended environment, replacing the local database identifier, and apply the committed migrations to that database. Configure Cloudflare Email Sending for an app-owned sender domain and Workers Paid. Set these three bindings using Wrangler secrets:
+
+| Binding | Value |
+| --- | --- |
+| `OTP_FROM` | Verified sender address for sign-in codes. |
+| `AUTH_SECRET` | High-entropy secret (at least 32 characters) for auth and user-scoped cursor signing. |
+| `MAIL_KEY` | Base64-encoded 32 random bytes for version 1 of the credential envelope. Retain this key when updating the Worker. |
+
+Local email uses the simulator. Hosted mail connections require public DNS names and trusted TLS. An inbox password or app password must work with IMAP and SMTP. [Email Sending setup](https://developers.cloudflare.com/email-service/get-started/send-emails/) · [Worker TCP restrictions](https://developers.cloudflare.com/workers/runtime-apis/tcp-sockets/#considerations)
+
+## Health checks
 
 | Endpoint | Expected response |
 | --- | --- |

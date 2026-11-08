@@ -18,7 +18,11 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4",
-    "hono": "^4.13.17"
+    "hono": "^4.13.17",
+    "html-to-text": "^9.0.5",
+    "imapflow": "^2.11.0",
+    "ipaddr.js": "^2.5.0",
+    "nodemailer": "^10.4.0"
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
@@ -27,6 +31,7 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "1.6.0",
+    "@types/html-to-text": "^9.0.4",
     "@types/node": "^24.0.0",
     "drizzle-kit": "^0.31.11",
     "typescript": "^6.0.3",

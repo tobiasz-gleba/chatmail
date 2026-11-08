@@ -42,3 +42,19 @@ it("returns a JSON error and the same request ID in the body and header for unkn
     requestId,
   });
 });
+
+it("protects the inbox collection, mail reads and mutations at the app boundary", async () => {
+  for (const [path, method] of [["/api/inboxes", "GET"], ["/api/mail/chats", "POST"], ["/api/mail/send", "POST"]]) {
+    const response = await exports.default.fetch("http://localhost" + path, {
+      method,
+      headers: { "content-type": "application/json" },
+      body: method === "POST" ? "{}" : undefined,
+    });
+    expect(response.status).toBe(401);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+  }
+  const crossOrigin = await exports.default.fetch("http://localhost/api/logout", {
+    method: "POST", headers: { origin: "https://another.example", "content-type": "application/json" }, body: "{}",
+  });
+  expect(crossOrigin.status).toBe(403);
+});

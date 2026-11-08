@@ -1,9 +1,11 @@
 import type { Context } from "hono";
 import type { RequestIdVariables } from "hono/request-id";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
+import type { User } from "@shared/contracts";
 
 export type AppEnv = {
   Bindings: Env;
-  Variables: RequestIdVariables;
+  Variables: RequestIdVariables & { user: User };
 };
 
 const errors = {
@@ -14,5 +16,9 @@ const errors = {
 
 export function errorResponse(c: Context<AppEnv>, code: keyof typeof errors) {
   const { message, status } = errors[code];
+  return apiError(c, status, code, message);
+}
+
+export function apiError(c: Context<AppEnv>, status: ContentfulStatusCode, code: string, message: string) {
   return c.json({ error: { code, message }, requestId: c.get("requestId") }, status);
 }

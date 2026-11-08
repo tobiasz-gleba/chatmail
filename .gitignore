@@ -147,3 +147,8 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local Worker state and browser test artifacts
+.wrangler/
+frontend/test-results/
+frontend/playwright-report/

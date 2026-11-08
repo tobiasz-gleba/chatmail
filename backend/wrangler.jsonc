@@ -3,6 +3,14 @@
   "name": "chatmail-backend",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "send_email": [{ "name": "EMAIL" }],
+  "secrets": { "required": ["AUTH_SECRET", "MAIL_KEY", "OTP_FROM"] },
+  "triggers": { "crons": ["14 3 * * *"] },
+  "assets": {
+    "directory": "../frontend/dist",
+    "run_worker_first": ["/api/*", "/health", "/ready"]
+  },
   "observability": { "enabled": true },
   "d1_databases": [
     {
