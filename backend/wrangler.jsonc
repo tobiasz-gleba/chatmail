@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "chatmail-backend",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-04",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "chatmail-local",
+      // Wrangler uses this stable identifier for local SQLite state.
+      "database_id": "00000000-0000-4000-8000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

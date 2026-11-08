@@ -1,0 +1,2 @@
+# Wrangler emits trailing spaces in its generated type declarations.
+worker-configuration.d.ts linguist-generated=true whitespace=-blank-at-eol
